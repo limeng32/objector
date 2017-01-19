@@ -1,6 +1,32 @@
 # objector
 an simple tablestore api
+Document is 
+[http://objector.open.chenmin.org](http://objector.open.chenmin.org)
+##Install for Maven
+```xml
+	<dependency>
+			<groupId>org.chenmin.open</groupId>
+			<artifactId>objector-ots</artifactId>
+			<version>0.0.3</version>
+	</dependency>
+	<repositories>
+		<repository>
+			<id>dpm</id>
+			<name>Team dpm Repository</name>
+			<url>http://vpn.dpm.im:8081/nexus/content/repositories/releases/</url>
+		</repository>
+	</repositories>
+```
 ##Useage 
+###Config for Aliyun.com OpenTableStore
+objector.properties in classpath
+```
+#Sign up in https://www.aliyun.com/product/ots
+ALIYUN_ACCESS_KEY=XXXXXX
+ALIYUN_SECRET_KEY=XXXXXX
+TS_ENDPOINT=http://YYYY.cn-beijing.ots.aliyuncs.com
+TS_INSTANCENAME=YYYY
+```
 ### Pojo with Annotation
 ```java
 @Entity
@@ -52,7 +78,6 @@ public class ServiceModule extends AbstractModule {
 public class TestUserService {
 
 	private static Injector injector;
-	private static Objector objector;
 	private static IStore store;
 
 	/**
@@ -62,64 +87,42 @@ public class TestUserService {
 	public static void setUpBeforeClass() throws Exception {
 
 		injector = Guice.createInjector(new ServiceModule());
-		objector = injector.getInstance(Objector.class);
 		store = injector.getInstance(IStore.class);
-		UserObject u = objector.createObject(UserObject.class);
+		UserObject u = new UserObject();
 		if (!store.exsitTable(u)) {
 			store.createTable(u);
 		}
 	}
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-	}
-
 	@Test
 	public void test() {
-
-		UserObject userObject = objector.createObject(UserObject.class);;
+		
+		UserObject userObject = new UserObject();
 		String openid = "chenmintest";
 		String passwd = "12345678";
 		String passwd2 = "12";
 		userObject.setOpenid(openid);
 		userObject.setPasswd(passwd);
 		assertTrue(store.save(userObject));
-		UserObject t = objector.createObject(UserObject.class);;
+		UserObject t = new UserObject();
 		t.setOpenid(openid);
 		assertTrue(store.get(t));
 		assertEquals(t.getPasswd(), passwd);
-		UserObject u = objector.createObject(UserObject.class);;
+		UserObject u = new UserObject();
 		u.setOpenid(openid);
 		u.setPasswd(passwd2);
 		assertTrue(store.update(u));
-		t = objector.createObject(UserObject.class);;
+		t = new UserObject();
 		t.setOpenid(openid);
 		assertTrue(store.get(t));
 		assertEquals(t.getPasswd(), passwd2);
-		t = objector.createObject(UserObject.class);;
+		t = new UserObject();
 		t.setOpenid(openid);
 		assertTrue(store.del(t));
 		assertEquals(t.getPasswd(),null);
 	}
-
 }
 
 ```
 
+ocean test
